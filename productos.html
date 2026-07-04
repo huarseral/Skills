@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mostrador de Productos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .product-card:hover .product-image::after {
+            opacity: 1;
+        }
+
+        .product-content {
+            padding: 25px;
+        }
+
+        .product-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .product-description {
+            font-size: 13px;
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            min-height: 50px;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #ecf0f1;
+            padding-top: 15px;
+        }
+
+        .price-section {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .price-label {
+            font-size: 12px;
+            color: #95a5a6;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #27ae60;
+        }
+
+        .quantity-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #ecf0f1;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .quantity-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            font-weight: 600;
+        }
+
+        .quantity {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2c3e50;
+            min-width: 25px;
+            text-align: center;
+        }
+
+        .add-button {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: transform 0.2s;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .add-button:hover {
+            transform: scale(1.02);
+        }
+
+        .add-button:active {
+            transform: scale(0.98);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+            }
+
+            .product-footer {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .quantity-section {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Mostrador de Productos</h1>
+            <p>Productos disponibles con precios y cantidades</p>
+        </div>
+
+        <div class="products-grid" id="productsContainer">
+            <!-- Los productos se generarán con JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            {
+                emoji: '📱',
+                name: 'iPhone 15 Pro',
+                description: 'Smartphone premium con pantalla OLED, cámara de 48MP y procesador A17 Pro',
+                price: 999,
+                quantity: 8
+            },
+            {
+                emoji: '💻',
+                name: 'MacBook Air M3',
+                description: 'Laptop ultradelgada y potente con chip Apple Silicon M3 de última generación',
+                price: 1299,
+                quantity: 5
+            },
+            {
+                emoji: '⌚',
+                name: 'Apple Watch Series 9',
+                description: 'Reloj inteligente con pantalla retina siempre activa y monitoreo de salud',
+                price: 399,
+                quantity: 12
+            },
+            {
+                emoji: '🎧',
+                name: 'AirPods Pro Max',
+                description: 'Auriculares premium con cancelación de ruido adaptativa y audio espacial',
+                price: 549,
+                quantity: 6
+            },
+            {
+                emoji: '📷',
+                name: 'Cámara Canon EOS R6',
+                description: 'Cámara digital profesional de espejo sin espejo con sensor de 20MP',
+                price: 2499,
+                quantity: 3
+            },
+            {
+                emoji: '🎮',
+                name: 'PlayStation 5',
+                description: 'Consola de videojuegos de última generación con SSD ultra rápido',
+                price: 499,
+                quantity: 15
+            },
+            {
+                emoji: '📺',
+                name: 'Samsung QLED 65"',
+                description: 'Televisor 4K con tecnología QLED, HDR10+ y refrescamiento 120Hz',
+                price: 1799,
+                quantity: 4
+            },
+            {
+                emoji: '🎵',
+                name: 'Sony Walkman ZX',
+                description: 'Reproductor de música portátil de alta fidelidad con 32GB almacenamiento',
+                price: 349,
+                quantity: 9
+            },
+            {
+                emoji: '🔌',
+                name: 'Power Bank 100W',
+                description: 'Batería externa de 30000mAh con carga rápida para múltiples dispositivos',
+                price: 89,
+                quantity: 25
+            },
+            {
+                emoji: '⚡',
+                name: 'Cargador Rápido USB-C',
+                description: 'Cargador de 140W compatible con laptops, tablets y smartphones',
+                price: 79,
+                quantity: 18
+            },
+            {
+                emoji: '🎙️',
+                name: 'Micrófono Shure SM7B',
+                description: 'Micrófono dinámico profesional para streaming, podcast y grabación',
+                price: 399,
+                quantity: 7
+            },
+            {
+                emoji: '🎛️',
+                name: 'Mezclador Behringer X2',
+                description: 'Consola de mezcla de audio digital con 16 canales y efectos integrados',
+                price: 299,
+                quantity: 5
+            }
+        ];
+
+        const container = document.getElementById('productsContainer');
+
+        products.forEach((product, index) => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.style.animationDelay = `${index * 0.05}s`;
+
+            card.innerHTML = `
+                <div class="product-image">${product.emoji}</div>
+                <div class="product-content">
+                    <div class="product-name">${product.name}</div>
+                    <div class="product-description">${product.description}</div>
+                    <div class="product-footer">
+                        <div class="price-section">
+                            <div class="price-label">Precio</div>
+                            <div class="price">$${product.price}</div>
+                        </div>
+                        <div class="quantity-section">
+                            <div class="quantity-label">Stock:</div>
+                            <div class="quantity">${product.quantity}</div>
+                        </div>
+                    </div>
+                    <button class="add-button" onclick="addToCart('${product.name}', ${product.price})">
+                        Agregar al Carrito
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(card);
+        });
+
+        function addToCart(name, price) {
+            alert(`${name} agregado al carrito\nPrecio: $${price}`);
+        }
+    </script>
+</body>
+</html>
